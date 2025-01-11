@@ -1,0 +1,10 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/" # Location of package manifests
+    schedule:
+      interval: "monthly"
+  - package-ecosystem: "pip"
+    directory: "github-actions" # Location of package manifests
+    schedule:
+      interval: "monthly"
