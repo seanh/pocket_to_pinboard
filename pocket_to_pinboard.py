@@ -96,8 +96,6 @@ class PocketClient:
 
             response_json = response.json()
 
-            offset += count
-
             for item in response_json["list"].values():
                 try:
                     url = item["resolved_url"]
@@ -110,6 +108,7 @@ class PocketClient:
 
                 yield Bookmark(url, title, tags, datetime.fromtimestamp(int(timestamp)))
 
+            offset += count
             total = int(response_json["total"])
 
             if total <= offset:
