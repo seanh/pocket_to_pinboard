@@ -1,0 +1,19 @@
+on:
+  schedule:
+    - cron: '* * * * *'
+  workflow_dispatch:
+concurrency:
+  group: sync
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+      - run: python3 -m venv .venv
+      - run: .venv/bin/pip install -r requirements.txt
+      - run: .venv/bin/python pocket_to_pinboard.py
+        env:
+          POCKET_CONSUMER_KEY: ${{ secrets.POCKET_CONSUMER_KEY }}
+          POCKET_ACCESS_TOKEN: ${{ secrets.POCKET_ACCESS_TOKEN }}
+          PINBOARD_AUTH_TOKEN: ${{ secrets.PINBOARD_AUTH_TOKEN }}
