@@ -101,7 +101,7 @@ class PocketClient:
             for item in response_json["list"].values():
                 try:
                     url = item["resolved_url"]
-                    title = item["given_title"]
+                    title = item["resolved_title"]
                     timestamp = item["time_added"]
                 except KeyError:
                     continue
