@@ -57,7 +57,7 @@ class HTTPClient:
 
     def _wait_at_least(self, seconds: int | float, since: datetime):
         """Wait until at least `seconds` seconds has passed since `since`."""
-        sleep(max(5 - (datetime.now() - since).total_seconds(), 0))
+        sleep(max(seconds - (datetime.now() - since).total_seconds(), 0))
 
 
 class PocketClient:
