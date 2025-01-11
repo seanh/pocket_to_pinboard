@@ -27,7 +27,10 @@ jobs:
           before = datetime.now()
 
           while (datetime.now() - before) < timedelta(hours=3):
-              run(Path("pocket_to_pinboard.py").absolute())
+              run([
+                Path(".venv/bin/python").absolute(),
+                Path("pocket_to_pinboard.py").absolute(),
+              ])
       - run: gh workflow enable --repo '${{ github.repository }}' '.github/workflows/sync.yml'
         env:
           GH_TOKEN: ${{ secrets.github_token }}
