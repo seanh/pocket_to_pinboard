@@ -14,23 +14,11 @@ jobs:
           python-version: '3.13'
       - run: python3 -m venv .venv
       - run: .venv/bin/pip install -r requirements.txt
-      - shell: python
+      - run: .venv/bin/python pocket_to_pinboard.py
         env:
           POCKET_CONSUMER_KEY: ${{ secrets.POCKET_CONSUMER_KEY }}
           POCKET_ACCESS_TOKEN: ${{ secrets.POCKET_ACCESS_TOKEN }}
           PINBOARD_AUTH_TOKEN: ${{ secrets.PINBOARD_AUTH_TOKEN }}
-        run: |
-          from datetime import datetime, timedelta
-          from pathlib import Path
-          from subprocess import run
-
-          before = datetime.now()
-
-          while (datetime.now() - before) < timedelta(hours=3):
-              run([
-                Path(".venv/bin/python").absolute(),
-                Path("pocket_to_pinboard.py").absolute(),
-              ])
       - run: gh workflow enable --repo '${{ github.repository }}' '.github/workflows/sync.yml'
         env:
           GH_TOKEN: ${{ secrets.github_token }}

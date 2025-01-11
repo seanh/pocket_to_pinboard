@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timedelta
+from pathlib import Path
 from os import environ
 from time import sleep
 
@@ -175,14 +176,17 @@ def main():
             environ["PINBOARD_AUTH_TOKEN"],
         )
 
-        if last_imported_bookmark := pinboard_client.get():
-            since = last_imported_bookmark.created
-        else:
-            since = None
+        before = datetime.now()
 
-        for bookmark in pocket_client.get(since):
-            print(bookmark)
-            pinboard_client.post(bookmark)
+        while (datetime.now() - before) < timedelta(hours=3):
+            if last_imported_bookmark := pinboard_client.get():
+                since = last_imported_bookmark.created
+            else:
+                since = None
+
+            for bookmark in pocket_client.get(since):
+                pinboard_client.post(bookmark)
+                print(bookmark)
 
 
 if __name__ == "__main__":
