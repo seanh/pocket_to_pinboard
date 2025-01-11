@@ -53,7 +53,6 @@ class HTTPClient:
         self._last_request = datetime.now()
 
         response = self._httpx_client.request(method, url, params=params, json=json)
-        print(f"{method} {url} -> {response} ({response.elapsed.total_seconds()}s)")
         return response
 
     def _wait_at_least(self, seconds: int | float, since: datetime):
@@ -177,12 +176,11 @@ def main():
 
         if last_imported_bookmark := pinboard_client.get():
             since = last_imported_bookmark.created
-            print(f"Last bookmark from Pinboard: {last_imported_bookmark}")
         else:
             since = None
 
         for bookmark in pocket_client.get(since):
-            print(f"Posting to Pinboard: {bookmark}")
+            print(bookmark)
             pinboard_client.post(bookmark)
 
 
