@@ -34,7 +34,7 @@ class Bookmark:
     url: str
     title: str
     tags: list[str]
-    created: datetime | None
+    created: datetime
 
 
 class HTTPClient:
@@ -102,19 +102,13 @@ class PocketClient:
                 try:
                     url = item["resolved_url"]
                     title = item["given_title"]
+                    timestamp = item["time_added"]
                 except KeyError:
                     continue
 
                 tags = {PINBOARD_TAG, *item.get("tags", {}).keys()}
 
-                timestamp = item.get("time_added")
-
-                if timestamp:
-                    timeobj = datetime.fromtimestamp(int(timestamp))
-                else:
-                    timeobj = None
-
-                yield Bookmark(url, title, tags, timeobj)
+                yield Bookmark(url, title, tags, datetime.fromtimestamp(int(timestamp)))
 
             total = int(response_json["total"])
 
