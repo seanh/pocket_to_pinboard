@@ -152,10 +152,8 @@ class PinboardClient:
             "tags": ",".join([tag.replace(" ", "_") for tag in bookmark.tags]),
             "shared": "no",
             "replace": "no",
+            "dt": bookmark.created.strftime(PINBOARD_TIME_FORMAT),
         }
-
-        if bookmark.created:
-            params["dt"] = bookmark.created.strftime(PINBOARD_TIME_FORMAT)
 
         response = self._http_client.request(
             "GET", "https://api.pinboard.in/v1/posts/add", params=params
