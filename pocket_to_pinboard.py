@@ -134,7 +134,10 @@ class PinboardClient:
             },
         )
 
-        bookmark_dict = response.json()[0]
+        try:
+            bookmark_dict = response.json()[0]
+        except IndexError:
+            return None
 
         return Bookmark(
             url=bookmark_dict.get("href", ""),
