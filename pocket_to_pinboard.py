@@ -55,6 +55,7 @@ class HTTPClient:
 
         response = self._httpx_client.request(method, url, params=params, json=json)
         print(f"{method} {url} -> {response} ({response.elapsed.total_seconds()}s)")
+        response.raise_for_status()
         return response
 
     def _wait_at_least(self, seconds: int | float, since: datetime):
@@ -93,7 +94,6 @@ class PocketClient:
             response = self._http_client.request(
                 "POST", "https://getpocket.com/v3/get", json=json
             )
-            response.raise_for_status()
 
             response_json = response.json()
 
@@ -161,7 +161,6 @@ class PinboardClient:
         response = self._http_client.request(
             "GET", "https://api.pinboard.in/v1/posts/add", params=params
         )
-        response.raise_for_status()
 
 
 def main():
