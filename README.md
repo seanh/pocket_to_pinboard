@@ -39,3 +39,4 @@ Limitations
   * If you run the script and it syncs a bookmark to Pinboard, then you edit the bookmark in Pocket (e.g. changing its tags) and run the script again, the bookmark won't be re-synced
 * Bookmarks deleted from Pocket won't be deleted from Pinboard
 * Favorites/stars aren't supported: if you favorite/star a bookmark in Pocket the script won't favorite/star it in Pinboard
+* If you delete the most recently imported bookmark(s) from Pinboard but not from Pocket, the next time you run the script it'll re-import them
