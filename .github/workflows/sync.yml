@@ -21,12 +21,12 @@ jobs:
           PINBOARD_AUTH_TOKEN: ${{ secrets.PINBOARD_AUTH_TOKEN }}
         run: |
           from datetime import datetime, timedelta
-          from pocket_to_pinboard import main
+          from subprocess import run
 
           before = datetime.now()
 
           while (datetime.now() - before) < timedelta(hours=3):
-            main()
+              subprocess.run("pocket_to_pinboard.py")
       - run: gh workflow enable --repo '${{ github.repository }}' '.github/workflows/sync.yml'
         env:
           GH_TOKEN: ${{ secrets.github_token }}
