@@ -55,7 +55,13 @@ class HTTPClient:
 
         response = self._httpx_client.request(method, url, params=params, json=json)
         print(f"{method} {url} -> {response} ({response.elapsed.total_seconds()}s)")
-        response.raise_for_status()
+
+        try:
+            response.raise_for_status()
+        except httpx.HTTPError:
+            print(response.text)
+            raise
+
         return response
 
     def _wait_at_least(self, seconds: int | float, since: datetime):
