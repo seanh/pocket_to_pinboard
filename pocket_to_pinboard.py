@@ -107,7 +107,7 @@ class PocketClient:
             except KeyError:
                 # Sometimes there's no "list" in Pocket's response.
                 print(response_json)
-                raise
+                continue
 
             for item in list_.values():
                 try:
