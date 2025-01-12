@@ -174,6 +174,16 @@ class PinboardClient:
             "GET", "https://api.pinboard.in/v1/posts/add", params=params
         )
 
+        try:
+            if response.json()["result_code"] == "item already exists":
+                # Don't log bookmarks that weren't modified because they
+                # already existed.
+                return
+        except Exception:
+            pass
+        else:
+            print(bookmark)
+
 
 def main():
     with httpx.Client() as httpx_client:
@@ -197,7 +207,6 @@ def main():
 
             for bookmark in pocket_client.get(since):
                 pinboard_client.post(bookmark)
-                print(bookmark)
 
 
 if __name__ == "__main__":
