@@ -97,7 +97,14 @@ class PocketClient:
 
             response_json = response.json()
 
-            for item in response_json["list"].values():
+            try:
+                list_ = response_json["list"]
+            except KeyError:
+                # Sometimes there's no "list" in Pocket's response.
+                print(response_json)
+                raise
+
+            for item in list_.values():
                 try:
                     url = item["resolved_url"]
                     title = item["resolved_title"]
