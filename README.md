@@ -51,7 +51,7 @@ To run the script continuously on GitHub Actions:
 
 2. Create three [GitHub Actions secrets](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions) in the repo: `POCKET_CONSUMER_KEY`, `POCKET_ACCESS_TOKEN` and `PINBOARD_AUTH_TOKEN`.
 
-3. Create a `.github/workflows/sync.yml` file in the repo, with these contents:
+3. Create a `.github/workflows/sync.yml` file in the repo, with these contents (replace `<COMMIT_ID>` with the latest commit ID from this repo's `main` branch):
 
    ```yml
    # .github/workflows/sync.yml
@@ -63,7 +63,7 @@ To run the script continuously on GitHub Actions:
      group: sync
    jobs:
      sync:
-       uses: seanh/pocket_to_pinboard/.github/workflows/sync.yml
+       uses: seanh/pocket_to_pinboard/.github/workflows/sync.yml@<COMMIT_ID>
        secrets:
          POCKET_CONSUMER_KEY: ${{ secrets.POCKET_CONSUMER_KEY }}
          POCKET_ACCESS_TOKEN: ${{ secrets.POCKET_ACCESS_TOKEN }}
@@ -75,4 +75,16 @@ To run the script continuously on GitHub Actions:
        - run: gh workflow enable --repo '${{ github.repository }}' '.github/workflows/sync.yml'
          env:
            GH_TOKEN: ${{ secrets.github_token }}
+   ```
+
+4. If pinning the version of `sync.yml` that you're calling to a specific `<COMMIT_ID>`, as in the example above, you may want to add a `.github/dependabot.yml` file like this to get Dependabot to send you updated PRs whenever I update this repo:
+
+   ```yml
+   # .github/dependabot.yml
+   version: 2
+   updates:
+   - package-ecosystem: "github-actions"
+     directory: "/"
+     schedule:
+       interval: "daily"
    ```
