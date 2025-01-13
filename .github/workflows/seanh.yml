@@ -1,0 +1,19 @@
+# Sync seanh's Pocket account to seanh's Pinboard account.
+on:
+  schedule:
+    - cron: '0 */3 * * *'
+  workflow_dispatch:
+concurrency:
+  group: seanh
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/workflows/sync.yml
+        secrets:
+          pocket_consumer_key: ${{ secrets.POCKET_CONSUMER_KEY }}
+          pocket_access_token: ${{ secrets.POCKET_ACCESS_TOKEN }}
+          pinboard_auth_token: ${{ secrets.PINBOARD_AUTH_TOKEN }}
+      - run: gh workflow enable --repo '${{ github.repository }}' '.github/workflows/sync.yml'
+        env:
+          GH_TOKEN: ${{ secrets.github_token }}
