@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from pathlib import Path
 from os import environ
@@ -29,13 +29,17 @@ POCKET_RATE_LIMIT = 24
 # https://pinboard.in/api/v2/overview#rate_limits
 PINBOARD_RATE_LIMIT = 6
 
+# Prevent stamina from logging "stamina.retry_scheduled" all the time.
+stamina.instrumentation.set_on_retry_hooks([lambda _: None])
+
 
 @dataclass(frozen=True)
 class Bookmark:
-    url: str
-    title: str
-    tags: list[str]
+    url: str = field(repr=False)
+    title: str = field(repr=False)
+    tags: list[str] = field(repr=False)
     created: datetime
+    pocket_id: str | None = None
 
 
 class HTTPClient:
@@ -54,6 +58,10 @@ class HTTPClient:
         self._last_request = datetime.now()
 
         response = self._httpx_client.request(method, url, params=params, json=json)
+
+        print(
+            f"{response.url.scheme}://{response.url.host}{response.url.path} => {response.status_code} {response.reason_phrase}"
+        )
 
         try:
             response.raise_for_status()
@@ -106,7 +114,9 @@ class PocketClient:
                 list_ = response_json["list"]
             except KeyError:
                 # Sometimes there's no "list" in Pocket's response.
-                print(response_json)
+                # For example sometimes it gives 200 OK responses that actually
+                # contain an error message instead of the usual JSON body.
+                # In that case just give up and try again later.
                 continue
 
             for item in list_.values():
@@ -117,9 +127,16 @@ class PocketClient:
                 except KeyError:
                     continue
 
+                pocket_id = item.get("resolved_id") or item.get("item_id") or None
                 tags = {PINBOARD_TAG, *item.get("tags", {}).keys()}
 
-                yield Bookmark(url, title, tags, datetime.fromtimestamp(int(timestamp)))
+                yield Bookmark(
+                    url,
+                    title,
+                    tags,
+                    datetime.fromtimestamp(int(timestamp)),
+                    pocket_id=pocket_id,
+                )
 
             offset += count
             total = int(response_json["total"])
@@ -182,7 +199,7 @@ class PinboardClient:
         except Exception:
             pass
         else:
-            print(bookmark)
+            print(f"Synced: {bookmark}")
 
 
 def main():
