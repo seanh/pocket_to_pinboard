@@ -68,7 +68,7 @@ To run the script continuously on GitHub Actions:
          POCKET_CONSUMER_KEY: ${{ secrets.POCKET_CONSUMER_KEY }}
          POCKET_ACCESS_TOKEN: ${{ secrets.POCKET_ACCESS_TOKEN }}
          PINBOARD_AUTH_TOKEN: ${{ secrets.PINBOARD_AUTH_TOKEN }}
-     Keepalive:
+     keepalive:
        needs: sync
        runs-on: ubuntu-latest
        steps:
