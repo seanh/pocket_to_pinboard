@@ -8,10 +8,10 @@ concurrency:
 jobs:
   sync:
     uses: ./.github/workflows/sync.yml
-      secrets:
-        pocket_consumer_key: ${{ secrets.POCKET_CONSUMER_KEY }}
-        pocket_access_token: ${{ secrets.POCKET_ACCESS_TOKEN }}
-        pinboard_auth_token: ${{ secrets.PINBOARD_AUTH_TOKEN }}
+    secrets:
+      pocket_consumer_key: ${{ secrets.POCKET_CONSUMER_KEY }}
+      pocket_access_token: ${{ secrets.POCKET_ACCESS_TOKEN }}
+      pinboard_auth_token: ${{ secrets.PINBOARD_AUTH_TOKEN }}
   keepalive:
     needs: sync
     runs-on: ubuntu-latest
