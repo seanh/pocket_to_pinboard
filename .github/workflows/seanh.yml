@@ -1,5 +1,5 @@
 # Sync seanh's Pocket account to seanh's Pinboard account.
-name: "Sync seanh"
+name: "Sync seanh's Pocket to Pinboard"
 on:
   schedule:
     - cron: '0 */3 * * *'
