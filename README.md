@@ -1,21 +1,7 @@
 Pocket to Pinboard Sync
 =======================
 
-Syncs bookmarks from Pocket to Pinboard.
-
-Usage
------
-
-```console
-$ python -m venv .venv
-$ .venv/bin/pip install -r requirements.txt
-$ POCKET_CONSUMER_KEY=$YOUR_POCKET_CONSUMER_KEY POCKET_ACCESS_TOKEN=$YOUR_POCKET_ACCESS_TOKEN PINBOARD_AUTH_TOKEN=$YOUR_PINBOARD_AUTH_TOKEN .venv/bin/python pocket_to_pinboard.py
-```
-
-To get a Pocket consumer key and access token follow Pocket's instructions: https://getpocket.com/developer/docs/authentication.
-This blog post is also helpful: https://www.jamesfmackenzie.com/getting-started-with-the-pocket-developer-api/.
-
-To get a Pinboard API token go to: https://pinboard.in/settings/password.
+Syncs your bookmarks from [Pocket](https://getpocket.com/) to [Pinboard](https://pinboard.in/).
 
 Features
 --------
@@ -28,7 +14,7 @@ Features
 * Also syncs a bookmark's tags from Pocket to Pinboard
   * Pocket tags can contain spaces, Pinboard tags can't. Any spaces in your Pocket tags will be replaced with underscores
 * Stays well within Pocket and Pinboard's API limits, even when syncing a lot of bookmarks
-* Run it periodically on GitHub Actions
+* Run it continuously on GitHub Actions
 
 Limitations
 -----------
@@ -40,3 +26,53 @@ Limitations
 * Bookmarks deleted from Pocket won't be deleted from Pinboard
 * Favorites/stars aren't supported: if you favorite/star a bookmark in Pocket the script won't favorite/star it in Pinboard
 * If you delete the most recently imported bookmark(s) from Pinboard but not from Pocket, the next time you run the script it'll re-import them
+
+Usage
+-----
+
+To get a Pocket consumer key and access token follow Pocket's instructions: https://getpocket.com/developer/docs/authentication.
+This blog post is also helpful: https://www.jamesfmackenzie.com/getting-started-with-the-pocket-developer-api/.
+
+To get a Pinboard API token go to: https://pinboard.in/settings/password.
+
+### Using locally
+
+```console
+$ python -m venv .venv
+$ .venv/bin/pip install -r requirements.txt
+$ POCKET_CONSUMER_KEY=$YOUR_POCKET_CONSUMER_KEY POCKET_ACCESS_TOKEN=$YOUR_POCKET_ACCESS_TOKEN PINBOARD_AUTH_TOKEN=$YOUR_PINBOARD_AUTH_TOKEN .venv/bin/python pocket_to_pinboard.py
+```
+
+### Using on GitHub Actions
+
+To run the script continuously on GitHub Actions:
+
+1. Create a GitHub repo
+
+2. Create three [GitHub Actions secrets](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions) in the repo: `POCKET_CONSUMER_KEY`, `POCKET_ACCESS_TOKEN` and `PINBOARD_AUTH_TOKEN`.
+
+3. Create a `.github/workflows/sync.yml` file in the repo, with these contents:
+
+   ```yml
+   # .github/workflows/sync.yml
+   on:
+     schedule:
+       - cron: '0 */3 * * *'
+     workflow_dispatch:
+   concurrency:
+     group: sync
+   jobs:
+     sync:
+       uses: seanh/pocket_to_pinboard/.github/workflows/sync.yml
+       secrets:
+         POCKET_CONSUMER_KEY: ${{ secrets.POCKET_CONSUMER_KEY }}
+         POCKET_ACCESS_TOKEN: ${{ secrets.POCKET_ACCESS_TOKEN }}
+         PINBOARD_AUTH_TOKEN: ${{ secrets.PINBOARD_AUTH_TOKEN }}
+     Keepalive:
+       needs: sync
+       runs-on: ubuntu-latest
+       steps:
+       - run: gh workflow enable --repo '${{ github.repository }}' '.github/workflows/sync.yml'
+         env:
+           GH_TOKEN: ${{ secrets.github_token }}
+   ```
