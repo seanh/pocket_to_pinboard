@@ -1,4 +1,5 @@
 # Reusable workflow for syncing a Pocket account to a Pinboard account.
+name: Sync
 on:
   workflow_call:
     secrets:
@@ -9,7 +10,7 @@ on:
       PINBOARD_AUTH_TOKEN:
         required: true
 jobs:
-  sync:
+  Sync:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

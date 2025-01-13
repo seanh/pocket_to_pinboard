@@ -1,4 +1,5 @@
 # Sync seanh's Pocket account to seanh's Pinboard account.
+name: "Sync seanh"
 on:
   schedule:
     - cron: '0 */3 * * *'
@@ -6,13 +7,13 @@ on:
 concurrency:
   group: seanh
 jobs:
-  sync:
+  Sync:
     uses: ./.github/workflows/sync.yml
     secrets:
       POCKET_CONSUMER_KEY: ${{ secrets.POCKET_CONSUMER_KEY }}
       POCKET_ACCESS_TOKEN: ${{ secrets.POCKET_ACCESS_TOKEN }}
       PINBOARD_AUTH_TOKEN: ${{ secrets.PINBOARD_AUTH_TOKEN }}
-  keepalive:
+  Keepalive:
     needs: sync
     runs-on: ubuntu-latest
     steps:
