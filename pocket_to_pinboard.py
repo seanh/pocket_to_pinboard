@@ -223,6 +223,16 @@ def main():
                 since = None
 
             for bookmark in pocket_client.get(since):
+                if since and bookmark.created < since:
+                    # We fetch all bookmarks from Pocket since `since` (which
+                    # is the created time of the last "via:pocket" bookmark on
+                    # Pinboard) but the Pocket API doesn't only return
+                    # bookmarks created since `since`: it also returns
+                    # bookmarks that were only *updated* (e.g. archived) since
+                    # `since`. Skip over these to avoid making unnecessary
+                    # Pinboard API requests.
+                    continue
+
                 pinboard_client.post(bookmark)
 
 
