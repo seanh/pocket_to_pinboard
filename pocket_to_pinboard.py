@@ -50,7 +50,7 @@ class HTTPClient:
         self._last_request: datetime | None = None
         self._rate = rate
 
-    @stamina.retry(on=httpx.HTTPError, timeout=None, wait_initial=10.0, wait_max=300.0)
+    @stamina.retry(on=httpx.HTTPError, timeout=None, attempts=25, wait_initial=10.0, wait_max=300.0)
     def request(self, method, url, params=None, json=None):
         if self._last_request:
             self._wait_at_least(self._rate, self._last_request)
